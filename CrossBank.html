@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cross-Bank - Decentralized Banking</title>
+  <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #0d0d0d;
+      overflow: hidden;
+    }
+
+  
+    body::before {
+      content: "";
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><polygon points="50,0 100,25 100,75 50,100 0,75 0,25" fill="none" stroke="%2300c6ff" stroke-width="1"/></svg>');
+      background-size: 80px;
+      opacity: 0.1;
+      animation: moveBG 20s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes moveBG {
+      0% { background-position: 0 0; }
+      100% { background-position: 1000px 1000px; }
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px 30px;
+      backdrop-filter: blur(5px);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 10;
+      transition: 0.3s;
+    }
+
+    .navbar:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  color: #00ffcc;
+  font-size: 18px;
+}
+
+.shield-logo {
+  width: 40px;
+  height: 48px;
+  background: linear-gradient(145deg, #00ffcc, #00c6ff);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 85%, 50% 100%, 0% 85%, 0% 25%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: black;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+}
+
+.cb-text {
+  font-family: 'Poppins', sans-serif;
+}
+
+    .brand-name {
+      font-size: 18px;
+      color: #00ffcc;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .navbar ul {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+    }
+
+    .navbar ul li a {
+  position: relative;
+  color: #00ffcc;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+.navbar ul li a::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  left: 0;
+  bottom: -4px;
+  background-color: #00ffcc;
+  transition: width 0.3s ease-in-out;
+}
+
+.navbar ul li a:hover::after {
+  width: 100%;
+}
+
+
+    
+    .card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+      text-align: center;
+      color: #fff;
+      width: 320px;
+    }
+
+    
+    .btn {
+      margin-top: 10px;
+      padding: 12px;
+      background: #00ffcc;
+      border: none;
+      color: #000;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #00aa88;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 300%;
+      height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    input {
+      margin-top: 10px;
+      padding: 8px;
+      width: 80%;
+      border: none;
+      outline: none;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    
+    .loader {
+      display: none;
+      margin: 10px auto;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #00ffcc;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+ 
+<nav class="navbar">
+  <div class="brand-logo">
+    <div class="shield-logo">
+      <span class="cb-text">CB</span>
+    </div>
+    <span class="brand-name">Cross-Bank</span>
+  </div>
+  <ul>
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="AI_Chatbox.html">AI ASSISTANT</a></li>
+  </ul>
+</nav>
+
+
+  
+  <main id="app">
+    <div class="card">
+      <h2>Cross-Bank</h2>
+      <p id="wallet-status">Not Connected</p>
+      <button class="btn connect-wallet">Connect Wallet</button>
+      <p>Balance: <span id="balance">0 ETH</span></p>
+      <input type="number" id="amount" placeholder="Enter amount in ETH">
+      <button class="btn deposit">Deposit</button>
+      <button class="btn withdraw">Withdraw</button>
+      <div class="loader"></div>
+    </div>
+  </main>
+
+  <script>
+    const contractAddress = "0xa113f7030549D0E044709F455554c4b96E9B7dd7"; 
+    const contractABI = [
+      { "inputs": [], "name": "deposit", "outputs": [], "stateMutability": "payable", "type": "function" },
+      { "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "withdraw", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+      { "inputs": [], "name": "getBalance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }
+    ];
+
+    let account = null;
+
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          account = accounts[0];
+          document.getElementById("wallet-status").innerText = `Connected: ${account}`;
+        } catch (error) {
+          alert("Error connecting to MetaMask.");
+        }
+      } else {
+        alert("MetaMask not detected.");
+      }
+    }
+
+    document.querySelector(".connect-wallet").addEventListener("click", connectWallet);
+  </script>
+
+</body>
+</html>

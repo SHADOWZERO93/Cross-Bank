@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cross-Bank | Animated Login</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* 🌟 Green & Black Background */
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to right, #006400, #001f00);
+      overflow: hidden;
+    }
+
+    /* 🔷 Small Hexagon */
+    .box {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      text-align: center;
+      clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+      transition: all 0.5s ease-in-out;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 🌟 Expand into a Form when Hovered */
+    .box:hover {
+      width: 400px;
+      height: 450px;
+      clip-path: none;
+      border-radius: 16px;
+      box-shadow: 0 0 25px rgba(0, 255, 0, 0.6);
+      backdrop-filter: blur(5px);
+      padding: 25px;
+      flex-direction: column;
+    }
+
+    /* 🔄 Glowing Rotation Effect */
+    .box::before, .box::after {
+      content: "";
+      position: absolute;
+      width: 180%;
+      height: 180%;
+      top: -40%;
+      left: -40%;
+      background: conic-gradient(#00ff00, #003300, #00ff00);
+      animation: rotate 4s linear infinite;
+      border-radius: 50%;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .box::after { filter: blur(50px); }
+
+    /* Form elements are hidden initially */
+    .form-elements {
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+      pointer-events: none;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* Show the form when hovered */
+    .box:hover .form-elements {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      background-color: #222;
+      color: white;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: linear-gradient(to right, #00ff00, #003300);
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(to right, #33ff33, #002200);
+    }
+
+    .toggle {
+      margin-top: 10px;
+      cursor: pointer;
+      color: #00ff00;
+      text-decoration: underline;
+    }
+
+    .error {
+      color: #ff4d4d;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box" id="formBox">
+    <div class="form-elements">
+      <h2 id="formTitle">Sign Up</h2>
+      <div id="error" class="error"></div>
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button onclick="handleAuth()">Sign Up</button>
+      <p class="toggle" onclick="toggleForm()">Already have an account? Login</p>
+    </div>
+  </div>
+
+  <script>
+    let isLogin = false;
+
+    function handleAuth() {
+      let username = document.getElementById("username").value.trim();
+      let password = document.getElementById("password").value.trim();
+      let errorDiv = document.getElementById("error");
+
+      if (username === "" || password === "") {
+        errorDiv.innerText = "Please enter all fields!";
+        return;
+      }
+
+      if (!isLogin) {
+        if (localStorage.getItem(username)) {
+          errorDiv.innerText = "Username already exists! Try logging in.";
+        } else {
+          localStorage.setItem(username, password);
+          alert("Account created! Now login.");
+          toggleForm();
+        }
+      } else {
+        let savedPassword = localStorage.getItem(username);
+        if (savedPassword && savedPassword === password) {
+          alert("Login successful!");
+          window.location.href = "CrossBank.html";
+        } else {
+          errorDiv.innerText = "Invalid username or password!";
+        }
+      }
+    }
+
+    function toggleForm() {
+      isLogin = !isLogin;
+      document.getElementById("formTitle").innerText = isLogin ? "Login" : "Sign Up";
+      document.querySelector("button").innerText = isLogin ? "Login" : "Sign Up";
+      document.querySelector(".toggle").innerText = isLogin
+        ? "Don't have an account? Sign Up"
+        : "Already have an account? Login";
+      document.getElementById("error").innerText = "";
+    }
+  </script>
+
+</body>
+</html>
